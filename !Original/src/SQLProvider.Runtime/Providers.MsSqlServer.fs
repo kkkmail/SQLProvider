@@ -4,65 +4,19 @@ open System
 open System.Collections.Concurrent
 open System.Collections.Generic
 open System.Data
+open System.Data.SqlClient
 open FSharp.Data.Sql
 open FSharp.Data.Sql.Transactions
 open FSharp.Data.Sql.Schema
 open FSharp.Data.Sql.Common
 
-module MSSqlServerDynamic =
-    let mutable resolutionPath = String.Empty
-    let mutable referencedAssemblies = [||]
-
-    let assemblyNames = [
-        "Microsoft.Data.SqlClient.dll"; "System.Data.SqlClient.dll"
-    ]
-
-    let assembly =
-        lazy Reflection.tryLoadAssemblyFrom resolutionPath referencedAssemblies assemblyNames
-
-    let findType name =
-        match assembly.Value with
-        | Choice1Of2(assembly) -> 
-            let types = 
-                try assembly.GetTypes() 
-                with | :? System.Reflection.ReflectionTypeLoadException as e ->
-                    let msgs = e.LoaderExceptions |> Seq.map(fun e -> e.GetBaseException().Message) |> Seq.distinct
-                    let details = "Details: " + Environment.NewLine + String.Join(Environment.NewLine, msgs)
-                    let platform = Reflection.getPlatform(System.Reflection.Assembly.GetExecutingAssembly())
-                    failwith (e.Message + Environment.NewLine + details + (if platform <> "" then Environment.NewLine +  "Current execution platform: " + platform else ""))
-            match types |> Array.tryFind(fun t -> t.Name = name) with
-            | Some t -> t
-            | None -> failwith ("Assembly " + assembly.FullName + " found, but it didn't contain expected type " + name +
-                                 Environment.NewLine + "Tired to load a dll: " + assembly.CodeBase)
-
-        | Choice2Of2(paths, errors) ->
-           let details = 
-                match errors with 
-                | [] -> "" 
-                | x -> Environment.NewLine + "Details: " + Environment.NewLine + String.Join(Environment.NewLine, x)
-           failwithf "Unable to resolve assemblies. One of %s (e.g. from Nuget package Microsoft.Data.SqlClient) must exist in the paths: %s %s %s"
-                (String.Join(", ", assemblyNames |> List.toArray))
-                Environment.NewLine
-                (String.Join(Environment.NewLine, paths |> Seq.filter(fun p -> not(String.IsNullOrEmpty p))))
-                details
-
-    let connectionType =  lazy (findType "SqlConnection")
-    let commandType =     lazy (findType "SqlCommand")
-    let parameterType =   lazy (findType "SqlParameter")
-    let enumType =        lazy (
-                            try findType "SqlDbType"
-                            with | _ -> typeof<System.Data.SqlDbType>)
-    let getSchemaMethod = lazy (connectionType.Value.GetMethod("GetSchema",[|typeof<string>; typeof<string[]>|]))
-
+module MSSqlServer =
     let getSchema name (args:string[]) (con:IDbConnection) =
+        let con = (con :?> SqlConnection)
         if con.State <> ConnectionState.Open then con.Open()
-        let res = getSchemaMethod.Value.Invoke(con,[|name; args|]) :?> DataTable
+        let res = con.GetSchema(name, args)
         con.Close()
         res
-
-    let parseDbType (dbTypeName : string) =
-        try Some(Enum.Parse(enumType.Value, dbTypeName) |> unbox<int>)
-        with _ -> None
 
     let mutable typeMappings = []
     let mutable findClrType : (string -> TypeMapping option)  = fun _ -> failwith "!"
@@ -72,19 +26,13 @@ module MSSqlServerDynamic =
         let dt = getSchema "DataTypes" [||] con
 
         let getDbType(providerType:int) =
-            let pv = parameterType.Value
-            let p = Activator.CreateInstance(pv,[||]) :?> IDbDataParameter
-            let setter = pv.GetProperty("SqlDbType").GetSetMethod()
-            let dbTypeGetter = pv.GetProperty("DbType").GetGetMethod()
-            setter.Invoke(p, [| 
-                (if providerType = 31
-                 then (match parseDbType "DateTime" with Some x -> x | None -> providerType)
-                 else if providerType = 32
-                 then (match parseDbType "Time" with Some x -> x | None -> providerType)
-                 else providerType)
-            |]) |> ignore
-
-            dbTypeGetter.Invoke(p, [||]) :?> DbType
+            let p = new SqlParameter()
+            if providerType = 31
+            then p.SqlDbType <- SqlDbType.DateTime
+            else if providerType = 32
+            then p.SqlDbType <- SqlDbType.Time
+            else p.SqlDbType <- (Enum.ToObject(typeof<SqlDbType>, providerType) :?> SqlDbType)
+            p.DbType
 
         let getClrType (input:string) =
             let t = Type.GetType input
@@ -127,29 +75,9 @@ module MSSqlServerDynamic =
         findClrType <- clrMappings.TryFind
         findDbType <- dbMappings.TryFind
 
-    let createConnection connectionString =
-        try
-            Activator.CreateInstance(connectionType.Value,[|box connectionString|]) :?> IDbConnection
-        with
-        | :? System.Reflection.ReflectionTypeLoadException as ex ->
-            let errorfiles = ex.LoaderExceptions |> Array.map(fun e -> e.GetBaseException().Message) |> Seq.distinct |> Seq.toArray
-            let msg = ex.GetBaseException().Message + "\r\n" + String.Join("\r\n", errorfiles)
-            raise(new System.Reflection.TargetInvocationException(msg, ex))
-        | :? System.Reflection.TargetInvocationException as ex when (ex.InnerException <> null && ex.InnerException :? DllNotFoundException) ->
-            let platform = Reflection.getPlatform(System.Reflection.Assembly.GetExecutingAssembly())
-            let msg = ex.GetBaseException().Message + ", Path: " + (System.IO.Path.GetFullPath resolutionPath)+
-                        (if platform <> "" then Environment.NewLine +  "Current execution platform: " + platform else "")
-            raise(new System.Reflection.TargetInvocationException(msg, ex))
-        | :? System.TypeInitializationException as te when (te.InnerException :? System.Reflection.TargetInvocationException) ->
-            let ex = te.InnerException :?> System.Reflection.TargetInvocationException
-            let platform = Reflection.getPlatform(System.Reflection.Assembly.GetExecutingAssembly())
-            let msg = ex.GetBaseException().Message + ", Path: " + (System.IO.Path.GetFullPath resolutionPath) +
-                      (if platform <> "" then Environment.NewLine +  "Current execution platform: " + platform else "")
-            raise (System.Reflection.TargetInvocationException(msg+platform, ex.GetBaseException()))
-        | :? System.TypeInitializationException as te when (te.InnerException <> null) -> raise (te.GetBaseException())
+    let createConnection connectionString = new SqlConnection(connectionString) :> IDbConnection
 
-    let createCommand commandText (connection:IDbConnection) =
-        Activator.CreateInstance(commandType.Value,[|box commandText;box connection|]) :?> IDbCommand
+    let createCommand commandText (connection:IDbConnection) = new SqlCommand(commandText, downcast connection) :> IDbCommand
 
     let dbUnbox<'a> (v:obj) : 'a =
         if Convert.IsDBNull(v) then Unchecked.defaultof<'a> else unbox v
@@ -163,12 +91,13 @@ module MSSqlServerDynamic =
         con.Close(); result
 
     let executeSql sql (con:IDbConnection) =
-        use com = Activator.CreateInstance(commandType.Value,[|box sql;box con|]) :?> IDbCommand
+        use com = new SqlCommand(sql,con:?>SqlConnection)
         com.ExecuteReader()
 
     let readParameter (parameter:IDbDataParameter) =
         if parameter <> null then
-            parameter.Value
+            let par = parameter :?> SqlParameter
+            par.Value
         else null
         
     let readInOutParameterFromCommand name (com:IDbCommand) = 
@@ -177,39 +106,28 @@ module MSSqlServerDynamic =
         match com.Parameters.Item name :?> IDataParameter with
         | p when p.Direction = ParameterDirection.InputOutput -> p.ParameterName, p.Value
         | p -> failwithf "Unsupported direction %A for parameter %A" p.Direction p.ParameterName
-
+            
     let createOpenParameter(name,v:obj)= 
-        let parameterType = parameterType.Value
-        let udtTypeSetter =
-            parameterType.GetProperty("UdtTypeName").GetSetMethod()
-
-        let p = Activator.CreateInstance(parameterType,[|box name;v|]) :?> IDbDataParameter
+        let p = SqlParameter(name,v)
         match v.GetType().FullName with
-        | "Microsoft.SqlServer.Types.SqlGeometry" -> udtTypeSetter.Invoke(p, [| "Geometry" |]) |> ignore
-        | "Microsoft.SqlServer.Types.SqlGeography" -> udtTypeSetter.Invoke(p, [| "Geography" |]) |> ignore
-        | "Microsoft.SqlServer.Types.SqlHierarchyId" -> udtTypeSetter.Invoke(p, [| "HierarchyId" |]) |> ignore
+        | "Microsoft.SqlServer.Types.SqlGeometry" -> p.UdtTypeName <- "Geometry"
+        | "Microsoft.SqlServer.Types.SqlGeography" -> p.UdtTypeName <- "Geography"
+        | "Microsoft.SqlServer.Types.SqlHierarchyId" -> p.UdtTypeName <- "HierarchyId"
         | _ -> ()
         p
 
     let createCommandParameter (param:QueryParameter) (value:obj) =
-        let parameterType = parameterType.Value
-        let sqlDbTypeSetter =
-            parameterType.GetProperty("SqlDbType").GetSetMethod()
-        let udtTypeSetter =
-            parameterType.GetProperty("UdtTypeName").GetSetMethod()
-
-        let p = Activator.CreateInstance(parameterType,[|box param.Name;value|]) :?> IDbDataParameter
+        let p = SqlParameter(param.Name,value)
         p.DbType <- param.TypeMapping.DbType
-        Option.iter (fun (t:int) ->
-            sqlDbTypeSetter.Invoke(p, [| t |]) |> ignore) param.TypeMapping.ProviderType
+        Option.iter (fun (t:int) -> p.SqlDbType <- Enum.ToObject(typeof<SqlDbType>, t) :?> SqlDbType) param.TypeMapping.ProviderType
         p.Direction <- param.Direction
         Option.iter (fun l -> p.Size <- l) param.Length
         match param.TypeMapping.ProviderTypeName with
-        | Some "Microsoft.SqlServer.Types.SqlGeometry" -> udtTypeSetter.Invoke(p, [| "Geometry" |]) |> ignore
-        | Some "Microsoft.SqlServer.Types.SqlGeography" -> udtTypeSetter.Invoke(p, [| "Geography" |]) |> ignore
-        | Some "Microsoft.SqlServer.Types.SqlHierarchyId" -> udtTypeSetter.Invoke(p, [| "HierarchyId" |]) |> ignore
+        | Some "Microsoft.SqlServer.Types.SqlGeometry" -> p.UdtTypeName <- "Geometry"
+        | Some "Microsoft.SqlServer.Types.SqlGeography" -> p.UdtTypeName <- "Geography"
+        | Some "Microsoft.SqlServer.Types.SqlHierarchyId" -> p.UdtTypeName <- "HierarchyId"
         | _ -> ()
-        p
+        p :> IDbDataParameter
 
     let getSprocReturnCols (con: IDbConnection) (sname: SprocName) (sparams: QueryParameter list) =
         let parameterStr =
@@ -286,6 +204,7 @@ module MSSqlServerDynamic =
         |> Seq.toList
 
     let getSprocs (con: IDbConnection) =
+        let con = (con :?> SqlConnection)
 
         let tableValued =
             Sql.executeSqlAsDataTable
@@ -322,7 +241,7 @@ module MSSqlServerDynamic =
 
     let processReturnColumn (com:IDbCommand) reader (retCol:QueryParameter) =
         match retCol.TypeMapping.ProviderTypeName with
-        | Some "cursor" ->
+        | Some "cursor" | Some "CURSOR" ->
             let result = ResultSet(retCol.Name, Sql.dataReaderToArray reader)
             reader.NextResult() |> ignore
             result
@@ -331,7 +250,7 @@ module MSSqlServerDynamic =
     let processReturnColumnAsync (com:IDbCommand) reader (retCol:QueryParameter) =
         async {
             match retCol.TypeMapping.ProviderTypeName with
-            | Some "cursor" ->
+            | Some "cursor" | Some "CURSOR" ->
                 let! r = Sql.dataReaderToArrayAsync reader
                 let result = ResultSet(retCol.Name, r)
                 let! _ = reader.NextResultAsync() |> Async.AwaitTask
@@ -376,8 +295,8 @@ module MSSqlServerDynamic =
         | [||] -> com.ExecuteNonQuery() |> ignore; Unit
         | [|retCol|] ->
             match retCol.TypeMapping.ProviderTypeName with
-            | Some "cursor" ->
-                use reader = com.ExecuteReader()
+            | Some "cursor" | Some "CURSOR" ->
+                use reader = com.ExecuteReader() :?> SqlDataReader
                 let result = SingleResultSet(retCol.Name, Sql.dataReaderToArray reader)
                 reader.NextResult() |> ignore
                 result
@@ -387,7 +306,7 @@ module MSSqlServerDynamic =
                 | Some(_,name,p) -> Scalar(name, readParameter p)
                 | None -> readInOutParameterFromCommand retCol.Name com |> Scalar
         | cols ->
-            use reader = com.ExecuteReader()
+            use reader = com.ExecuteReader() :?> SqlDataReader
             Set(cols |> Array.map (processReturnColumn com reader))
 
 
@@ -401,9 +320,9 @@ module MSSqlServerDynamic =
                       return Unit
             | [|retCol|] ->
                 match retCol.TypeMapping.ProviderTypeName with
-                | Some "cursor" ->
+                | Some "cursor" | Some "CURSOR" ->
                     use! readera = com.ExecuteReaderAsync() |> Async.AwaitTask
-                    let reader = readera
+                    let reader = readera :?> SqlDataReader
                     let! r = Sql.dataReaderToArrayAsync reader
                     let result = SingleResultSet(retCol.Name, r)
                     let! _ = reader.NextResultAsync() |> Async.AwaitTask
@@ -419,14 +338,6 @@ module MSSqlServerDynamic =
                 return Set(r |> List.toArray)
         }
 
-open MSSqlServerDynamic
-type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, referencedAssemblies, tableNames:string) as this =
-    let schemaCache = SchemaCache.LoadOrEmpty(contextSchemaPath)
-    let myLock = new Object()
-    
-    // Remembers the version of each instance it connects to
-    let mssqlVersionCache = ConcurrentDictionary<string, Lazy<Version>>()
-
     let fieldNotationAlias(al:alias,col:SqlColumnType) = 
         let aliasSprint =
             match String.IsNullOrEmpty(al) with
@@ -434,11 +345,11 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
             | false -> sprintf "'[%s].[%s]'" al
         Utilities.genericAliasNotation aliasSprint col
 
-    let createInsertCommand (con:IDbConnection) (sb:Text.StringBuilder) (entity:SqlEntity) =
+    let internal createInsertCommand schemaCache (con:IDbConnection) (sb:Text.StringBuilder) (entity:SqlEntity) =
         let (~~) (t:string) = sb.Append t |> ignore
 
-        let cmd = (this :> ISqlProvider).CreateCommand(con,"")
-        cmd.Connection <- con
+        let cmd = new SqlCommand()
+        cmd.Connection <- con :?> SqlConnection
         let haspk = schemaCache.PrimaryKeys.ContainsKey(entity.Table.FullName)
         let pk = if haspk then schemaCache.PrimaryKeys.[entity.Table.FullName] else []
         let columnNames, values =
@@ -472,18 +383,17 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                     (String.Join(",",columnNames))
                     (String.Join(",",values |> Array.map(fun p -> p.ParameterName))))
 
-        values |> Array.iter(fun v -> cmd.Parameters.Add v |> ignore)
+        cmd.Parameters.AddRange(values)
         cmd.CommandText <- sb.ToString()
         cmd
 
-    let createUpdateCommand (con:IDbConnection) (sb:Text.StringBuilder) (entity:SqlEntity) (changedColumns:string list) =
+    let internal createUpdateCommand schemaCache (con:IDbConnection) (sb:Text.StringBuilder) (entity:SqlEntity) (changedColumns:string list) =
         let (~~) (t:string) = sb.Append t |> ignore
 
-        let cmd = (this :> ISqlProvider).CreateCommand(con,"")
-        cmd.Connection <- con
+        let cmd = new SqlCommand()
+        cmd.Connection <- con :?> SqlConnection
         let haspk = schemaCache.PrimaryKeys.ContainsKey(entity.Table.FullName)
         let pk = if haspk then schemaCache.PrimaryKeys.[entity.Table.FullName] else []
-
         sb.Clear() |> ignore
         match pk with
         | [x] when changedColumns |> List.exists ((=)x)
@@ -504,7 +414,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                     | Some v ->
                         let p = createOpenParameter(name,v)
                         p
-                    | None -> createOpenParameter(name, DBNull.Value)
+                    | None -> createOpenParameter(name,DBNull.Value)
                 (col,p)::out,i+1)
             |> fst
             |> List.rev
@@ -518,18 +428,18 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                 (String.Join(",", data |> Array.map(fun (c,p) -> sprintf "[%s] = %s" c p.ParameterName ) )))
             ~~(String.Join(" AND ", ks |> List.mapi(fun i k -> (sprintf "[%s] = @pk%i" k i))))
 
-        data |> Array.map snd |> Array.iter(fun v ->cmd.Parameters.Add v |> ignore)
+        cmd.Parameters.AddRange(data |> Array.map snd)
         pkValues |> List.iteri(fun i pkValue ->
-            let pkParam = createOpenParameter("@pk"+i.ToString(),pkValue)
+            let pkParam = createOpenParameter(("@pk"+i.ToString()), pkValue)
             cmd.Parameters.Add pkParam |> ignore)
         cmd.CommandText <- sb.ToString()
         cmd
 
-    let createDeleteCommand (con:IDbConnection) (sb:Text.StringBuilder) (entity:SqlEntity) =
+    let internal createDeleteCommand schemaCache (con:IDbConnection) (sb:Text.StringBuilder) (entity:SqlEntity) =
         let (~~) (t:string) = sb.Append t |> ignore
 
-        let cmd = (this :> ISqlProvider).CreateCommand(con,"")
-        cmd.Connection <- con 
+        let cmd = new SqlCommand()
+        cmd.Connection <- con :?> SqlConnection
         sb.Clear() |> ignore
         let haspk = schemaCache.PrimaryKeys.ContainsKey(entity.Table.FullName)
         let pk = if haspk then schemaCache.PrimaryKeys.[entity.Table.FullName] else []
@@ -540,8 +450,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
             | v -> v
 
         pkValues |> List.iteri(fun i pkValue ->
-            let p = (this :> ISqlProvider).CreateCommandParameter(QueryParameter.Create("@id"+i.ToString(), i),pkValue)
-            cmd.Parameters.Add(p) |> ignore)
+            cmd.Parameters.AddWithValue(("@id"+i.ToString()),pkValue) |> ignore)
 
         match pk with
         | [] -> ()
@@ -551,10 +460,22 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
 
         cmd.CommandText <- sb.ToString()
         cmd
+        
+type internal MSSQLPagingCompatibility =
+  // SQL SERVER versions since 2012
+  | Offset = 0
+  // SQL SERVER versions prior to 2012
+  | RowNumber = 1
 
-    do
-        MSSqlServerDynamic.resolutionPath <- resolutionPath
-        MSSqlServerDynamic.referencedAssemblies <- referencedAssemblies
+type internal MSSqlServerProvider(contextSchemaPath, tableNames:string) =
+    let schemaCache = SchemaCache.LoadOrEmpty(contextSchemaPath)
+    let createInsertCommand = MSSqlServer.createInsertCommand schemaCache
+    let createUpdateCommand = MSSqlServer.createUpdateCommand schemaCache
+    let createDeleteCommand = MSSqlServer.createDeleteCommand schemaCache
+    let myLock = new Object()
+    
+    // Remembers the version of each instance it connects to
+    let mssqlVersionCache = ConcurrentDictionary<string, Lazy<Version>>()
 
     interface ISqlProvider with
         member __.GetLockObject() = myLock
@@ -567,9 +488,8 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                                                         and (sep.minor_id is null or sep.minor_id =0)
                                                         and sep.name = 'MS_Description'
                 where st.name = @TableName"""
-            use com = (this:>ISqlProvider).CreateCommand(con,baseq)
-            com.Parameters.Add((this:>ISqlProvider).CreateCommandParameter(QueryParameter.Create("@TableName", 0), tn)) |> ignore
-
+            use com = new SqlCommand(baseq,con:?>SqlConnection)
+            com.Parameters.AddWithValue("@TableName",tn) |> ignore
             if con.State <> ConnectionState.Open then con.Open()
             use reader = com.ExecuteReader()
             if reader.Read() then
@@ -590,9 +510,9 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                                                         and sep.name = 'MS_Description'
                 where st.name = @TableName
                 and sc.name = @ColumnName"""
-            use com = (this:>ISqlProvider).CreateCommand(con,baseq)
-            com.Parameters.Add((this:>ISqlProvider).CreateCommandParameter(QueryParameter.Create("@TableName", 0), tn)) |> ignore
-            com.Parameters.Add((this:>ISqlProvider).CreateCommandParameter(QueryParameter.Create("@ColumnName", 1), columnName)) |> ignore
+            use com = new SqlCommand(baseq,con:?>SqlConnection)
+            com.Parameters.AddWithValue("@TableName",tn) |> ignore
+            com.Parameters.AddWithValue("@ColumnName",columnName) |> ignore
             if con.State <> ConnectionState.Open then con.Open()
             use reader = com.ExecuteReader()
             if reader.Read() then
@@ -601,12 +521,12 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                 with 
                 | :? InvalidCastException -> ""
             else ""
-        member __.CreateConnection(connectionString) = MSSqlServerDynamic.createConnection connectionString
-        member __.CreateCommand(connection,commandText) = MSSqlServerDynamic.createCommand commandText connection
-        member __.CreateCommandParameter(param, value) = MSSqlServerDynamic.createCommandParameter param value
-        member __.ExecuteSprocCommand(con, inputParameters, returnCols, values:obj array) = MSSqlServerDynamic.executeSprocCommand con inputParameters returnCols values
-        member __.ExecuteSprocCommandAsync(con, inputParameters, returnCols, values:obj array) = MSSqlServerDynamic.executeSprocCommandAsync con inputParameters returnCols values
-        member __.CreateTypeMappings(con) = MSSqlServerDynamic.createTypeMappings con
+        member __.CreateConnection(connectionString) = MSSqlServer.createConnection connectionString
+        member __.CreateCommand(connection,commandText) = MSSqlServer.createCommand commandText connection
+        member __.CreateCommandParameter(param, value) = MSSqlServer.createCommandParameter param value
+        member __.ExecuteSprocCommand(con, inputParameters, returnCols, values:obj array) = MSSqlServer.executeSprocCommand con inputParameters returnCols values
+        member __.ExecuteSprocCommandAsync(con, inputParameters, returnCols, values:obj array) = MSSqlServer.executeSprocCommandAsync con inputParameters returnCols values
+        member __.CreateTypeMappings(con) = MSSqlServer.createTypeMappings con
         member __.GetSchemaCache() = schemaCache
         
         member __.GetTables(con,_) =
@@ -614,10 +534,10 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                 match tableNames with 
                 | "" -> ""
                 | x -> " where 1=1 " + (SchemaProjections.buildTableNameWhereFilter "TABLE_NAME" tableNames)
-            MSSqlServerDynamic.connect con (fun con ->
-            use reader = MSSqlServerDynamic.executeSql ("select TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE from INFORMATION_SCHEMA.TABLES" + tableNamesFilter) con
+            MSSqlServer.connect con (fun con ->
+            use reader = MSSqlServer.executeSql ("select TABLE_SCHEMA, TABLE_NAME, TABLE_TYPE from INFORMATION_SCHEMA.TABLES" + tableNamesFilter) con
             [ while reader.Read() do
-                let table ={ Schema = reader.GetString(0) ; Name = reader.GetString(1) ; Type=reader.GetString(2).ToLower() }
+                let table ={ Schema = reader.GetSqlString(0).Value ; Name = reader.GetSqlString(1).Value ; Type=reader.GetSqlString(2).Value.ToLower() }
                 yield schemaCache.Tables.GetOrAdd(table.FullName,table)
                 ])
 
@@ -633,10 +553,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
             mssqlVersionCache.GetOrAdd(con.ConnectionString, fun conn ->
                 lazy
                     if con.State <> ConnectionState.Open then con.Open()
-                    let ver = con.GetType().GetProperty("ServerVersion").GetValue(con,null)
-                    if ver = null then Version("12.0")
-                    else
-                    let success, version = ver.ToString() |> Version.TryParse
+                    let success, version = (con :?> SqlConnection).ServerVersion |> Version.TryParse
                     if success then version else Version("12.0")
             ).Value |> ignore 
                 
@@ -668,26 +585,25 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                                              AND c.COLUMN_NAME = pk.COLUMN_NAME
                                  WHERE c.TABLE_SCHEMA = @schema AND c.TABLE_NAME = @table
                                  ORDER BY c.TABLE_SCHEMA,c.TABLE_NAME, c.ORDINAL_POSITION"
-               use com = (this:>ISqlProvider).CreateCommand(con,baseQuery)
-               com.Parameters.Add((this:>ISqlProvider).CreateCommandParameter(QueryParameter.Create("@schema", 0), table.Schema)) |> ignore
-               com.Parameters.Add((this:>ISqlProvider).CreateCommandParameter(QueryParameter.Create("@table", 1), table.Name)) |> ignore
-
+               use com = new SqlCommand(baseQuery,con:?>SqlConnection)
+               com.Parameters.AddWithValue("@schema",table.Schema) |> ignore
+               com.Parameters.AddWithValue("@table",table.Name) |> ignore
                if con.State <> ConnectionState.Open then con.Open()
 
                use reader = com.ExecuteReader()
                let columns =
                    [ while reader.Read() do
-                       let dt = reader.GetString(1)
-                       let maxlen =
-                            if reader.IsDBNull(2) then 0
-                            else reader.GetInt32(2)
-                       match MSSqlServerDynamic.findDbType dt with
+                       let dt = reader.GetSqlString(1).Value
+                       let maxlen = 
+                            let x = reader.GetSqlInt32(2)
+                            if x.IsNull then 0 else (x.Value)
+                       match MSSqlServer.findDbType dt with
                        | Some(m) ->
                            let col =
-                             { Column.Name = reader.GetString(0);
+                             { Column.Name = reader.GetSqlString(0).Value;
                                TypeMapping = m
                                IsNullable = let b = reader.GetString(4) in if b = "YES" then true else false
-                               IsPrimaryKey = if reader.GetString(5) = "PRIMARY KEY" then true else false
+                               IsPrimaryKey = if reader.GetSqlString(5).Value = "PRIMARY KEY" then true else false
                                IsAutonumber = reader.GetInt32(6) = 1
                                HasDefault = reader.GetInt32(7) = 1
                                IsComputed = reader.GetInt32(8) = 1
@@ -734,31 +650,36 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                                 AND KCU2.CONSTRAINT_NAME = RC.UNIQUE_CONSTRAINT_NAME
                                 AND KCU2.ORDINAL_POSITION = KCU1.ORDINAL_POSITION "
 
-            let res = MSSqlServerDynamic.connect con (fun con ->
+            let res = MSSqlServer.connect con (fun con ->
                 let baseq1 = sprintf "%s WHERE KCU2.TABLE_NAME = @tblName" baseQuery 
-                use com1 = (this:>ISqlProvider).CreateCommand(con,baseq1)
-                com1.Parameters.Add((this:>ISqlProvider).CreateCommandParameter(QueryParameter.Create("@tblName", 0), table.Name)) |> ignore
+                use com1 = new SqlCommand(baseq1,con:?>SqlConnection)
+                com1.Parameters.AddWithValue("@tblName",table.Name) |> ignore 
                 if con.State <> ConnectionState.Open then con.Open()
                 use reader = com1.ExecuteReader()
                 let children =
                     [ while reader.Read() do
-                        yield { Name = reader.GetString(0); PrimaryTable=Table.CreateFullName(reader.GetString(9), reader.GetString(5)); PrimaryKey=reader.GetString(6)
-                                ForeignTable= Table.CreateFullName(reader.GetString(8), reader.GetString(1)); ForeignKey=reader.GetString(2) } ]
+                        yield { Name = reader.GetSqlString(0).Value 
+                                PrimaryTable = Table.CreateFullName(reader.GetSqlString(9).Value, reader.GetSqlString(5).Value)
+                                PrimaryKey = reader.GetSqlString(6).Value
+                                ForeignTable = Table.CreateFullName(reader.GetSqlString(8).Value, reader.GetSqlString(1).Value)
+                                ForeignKey=reader.GetSqlString(2).Value } ]
                 reader.Dispose()
                 let baseq2 = sprintf "%s WHERE KCU1.TABLE_NAME = @tblName" baseQuery
-                use com2 = (this:>ISqlProvider).CreateCommand(con,baseq2)
-                com2.Parameters.Add((this:>ISqlProvider).CreateCommandParameter(QueryParameter.Create("@tblName", 0), table.Name)) |> ignore
-
+                use com2 = new SqlCommand(baseq2,con:?>SqlConnection)
+                com2.Parameters.AddWithValue("@tblName",table.Name) |> ignore
                 if con.State <> ConnectionState.Open then con.Open()
                 use reader = com2.ExecuteReader()
                 let parents =
                     [ while reader.Read() do
-                        yield { Name = reader.GetString(0); PrimaryTable=Table.CreateFullName(reader.GetString(9), reader.GetString(5)); PrimaryKey=reader.GetString(6)
-                                ForeignTable=Table.CreateFullName(reader.GetString(8), reader.GetString(1)); ForeignKey=reader.GetString(2) } ]
+                        yield { Name = reader.GetSqlString(0).Value;
+                                PrimaryTable = Table.CreateFullName(reader.GetSqlString(9).Value, reader.GetSqlString(5).Value);
+                                PrimaryKey = reader.GetSqlString(6).Value
+                                ForeignTable = Table.CreateFullName(reader.GetSqlString(8).Value, reader.GetSqlString(1).Value);
+                                ForeignKey=reader.GetSqlString(2).Value } ]
                 (children,parents))
             res)
 
-        member __.GetSprocs(con) = MSSqlServerDynamic.connect con MSSqlServerDynamic.getSprocs
+        member __.GetSprocs(con) = MSSqlServer.connect con MSSqlServer.getSprocs
         member __.GetIndividualsQueryText(table,amount) = sprintf "SELECT TOP %i * FROM %s" amount table.FullName
         member __.GetIndividualQueryText(table,column) = sprintf "SELECT * FROM [%s].[%s] WHERE [%s].[%s].[%s] = @id" table.Schema table.Name table.Schema table.Name column
 
@@ -772,14 +693,14 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
 
             let createParam (value:obj) =
                 let paramName = nextParam()
-                createOpenParameter(paramName,value)
+                let p = MSSqlServer.createOpenParameter(paramName,value)
+                p :> IDbDataParameter
 
             let fieldParam (value:obj) =
                 let paramName = nextParam()
-                let p = createOpenParameter(paramName,value)
-                parameters.Add(p)
+                parameters.Add(MSSqlServer.createOpenParameter(paramName,value):> IDbDataParameter)
                 paramName
-
+                            
             let mssqlPaging =               
               match mssqlVersionCache.TryGetValue(con.ConnectionString) with
               // SQL 2008 and earlier do not support OFFSET
@@ -1002,12 +923,12 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
 
             // Cache select-params to match group-by params
             let tmpGrpParams = Dictionary<(alias*SqlColumnType), string>()
-
+            
             // Create sumBy, minBy, maxBy, ... field columns
             let columns =
                 let extracolumns =
                     match sqlQuery.Grouping with
-                    | [] -> FSharp.Data.Sql.Common.Utilities.parseAggregates fieldNotation fieldNotationAlias sqlQuery.AggregateOp
+                    | [] -> FSharp.Data.Sql.Common.Utilities.parseAggregates fieldNotation MSSqlServer.fieldNotationAlias sqlQuery.AggregateOp
                     | g  -> 
                         let keys = g |> List.map(fst) |> List.concat |> List.map(fun (a,c) ->
                             let fn = fieldNotation a c
@@ -1016,7 +937,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                             if sqlQuery.Aliases.Count < 2 then fn
                             else sprintf "%s as '%s'" fn fn)
                         let aggs = g |> List.map(snd) |> List.concat
-                        let res2 = FSharp.Data.Sql.Common.Utilities.parseAggregates fieldNotation fieldNotationAlias aggs |> List.toSeq
+                        let res2 = FSharp.Data.Sql.Common.Utilities.parseAggregates fieldNotation MSSqlServer.fieldNotationAlias aggs |> List.toSeq
                         [String.Join(", ", keys) + (if List.isEmpty aggs || List.isEmpty keys then ""  else ", ") + String.Join(", ", res2)] 
                 match extracolumns with
                 | [] -> selectcolumns
@@ -1174,7 +1095,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                 |> Seq.iter(fun e ->
                     match e._State with
                     | Created ->
-                        let cmd = createInsertCommand con sb e :?> System.Data.Common.DbCommand
+                        let cmd = createInsertCommand con sb e
                         Common.QueryEvents.PublishSqlQueryCol con.ConnectionString cmd.CommandText cmd.Parameters
                         if timeout.IsSome then
                             cmd.CommandTimeout <- timeout.Value
@@ -1182,14 +1103,14 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                         CommonTasks.checkKey schemaCache.PrimaryKeys id e
                         e._State <- Unchanged
                     | Modified fields ->
-                        let cmd = createUpdateCommand con sb e fields :?> System.Data.Common.DbCommand
+                        let cmd = createUpdateCommand con sb e fields
                         Common.QueryEvents.PublishSqlQueryCol con.ConnectionString cmd.CommandText cmd.Parameters
                         if timeout.IsSome then
                             cmd.CommandTimeout <- timeout.Value
                         cmd.ExecuteNonQuery() |> ignore
                         e._State <- Unchanged
                     | Delete ->
-                        let cmd = createDeleteCommand con sb e :?> System.Data.Common.DbCommand
+                        let cmd = createDeleteCommand con sb e
                         Common.QueryEvents.PublishSqlQueryCol con.ConnectionString cmd.CommandText cmd.Parameters
                         if timeout.IsSome then
                             cmd.CommandTimeout <- timeout.Value
@@ -1224,7 +1145,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                         match e._State with
                         | Created ->
                             async {
-                                let cmd = createInsertCommand con sb e :?> System.Data.Common.DbCommand
+                                let cmd = createInsertCommand con sb e
                                 Common.QueryEvents.PublishSqlQueryCol con.ConnectionString cmd.CommandText cmd.Parameters
                                 if timeout.IsSome then
                                     cmd.CommandTimeout <- timeout.Value
@@ -1234,7 +1155,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                             }
                         | Modified fields ->
                             async {
-                                let cmd = createUpdateCommand con sb e fields :?> System.Data.Common.DbCommand
+                                let cmd = createUpdateCommand con sb e fields
                                 Common.QueryEvents.PublishSqlQueryCol con.ConnectionString cmd.CommandText cmd.Parameters
                                 if timeout.IsSome then
                                     cmd.CommandTimeout <- timeout.Value
@@ -1243,7 +1164,7 @@ type internal MSSqlServerDynamicProvider(resolutionPath, contextSchemaPath, refe
                             }
                         | Delete ->
                             async {
-                                let cmd = createDeleteCommand con sb e :?> System.Data.Common.DbCommand
+                                let cmd = createDeleteCommand con sb e
                                 Common.QueryEvents.PublishSqlQueryCol con.ConnectionString cmd.CommandText cmd.Parameters
                                 if timeout.IsSome then
                                     cmd.CommandTimeout <- timeout.Value

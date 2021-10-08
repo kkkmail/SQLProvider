@@ -1,0 +1,1252 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doc>
+<assembly><name>FSharp.Data.SqlProvider.DesignTime</name></assembly>
+<members>
+<member name="P:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.TargetContext">
+<summary>
+ The context for which code is eventually to be generated. You should not normally
+ need to use this property directly, as translation from the compiler-hosted context to 
+ the design-time context will normally be performed automatically.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.Namespaces">
+<summary>
+ Invoked by the type provider to get all provided namespaces with their provided types.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.ResolveAssembly(System.ResolveEventArgs)">
+<summary>
+ AssemblyResolve handler. Default implementation searches &lt;assemblyname&gt;.dll file in registered folders
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.RegisterRuntimeAssemblyLocationAsProbingFolder(Microsoft.FSharp.Core.CompilerServices.TypeProviderConfig)">
+<summary>
+ Registers location of RuntimeAssembly (from TypeProviderConfig) as probing folder
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.RegisterProbingFolder(System.String)">
+<summary>
+ Registers custom probing path that can be used for probing assemblies
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.Invalidate">
+<summary>
+ Invoked by the type provider to invalidate the information provided by the provider
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.GetStaticParametersForMethod(System.Reflection.MethodBase)">
+<summary>
+ Invoked by the host of the type provider to get the static parameters for a method.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.ApplyStaticArgumentsForMethod(System.Reflection.MethodBase,System.String,System.Object[])">
+<summary>
+ Invoked by the host of the type provider to apply the static argumetns for a method.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.AddNamespace(System.String,Microsoft.FSharp.Collections.FSharpList{ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition})">
+<summary>
+ Invoked by the type provider to add a namespace of provided types in the specification of the type provider.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.#ctor(Microsoft.FSharp.Core.CompilerServices.TypeProviderConfig,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Collections.FSharpList{System.Reflection.Assembly}},Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.String,System.String}}},Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+ <summary>Initializes a type provider.</summary>
+ <param name="sourceAssemblies">
+    Optionally specify the design-time assemblies available to use as a basis for authoring provided types.
+    The transitive dependencies of these assemblies are also included. By default
+    Assembly.GetCallingAssembly() and its transitive dependencies are used.
+ </param>
+               
+ <param name="assemblyReplacementMap">
+    Optionally specify a map of assembly names from source model to referenced assemblies.
+ </param>
+               
+ <param name="addDefaultProbingLocation">
+    Optionally specify that the location of the type provider design-time component should be used to resolve failing assembly resolutions.
+    This flag or an equivalent call to RegisterProbingFolder is generally needed for any type provider design-time components loaded into .NET Core tooling.
+ </param>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces.#ctor(Microsoft.FSharp.Core.CompilerServices.TypeProviderConfig,System.String,Microsoft.FSharp.Collections.FSharpList{ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition},Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Collections.FSharpList{System.Reflection.Assembly}},Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Collections.FSharpList{System.Tuple{System.String,System.String}}},Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+ <summary>Initializes a type provider to provide the types in the given namespace.</summary>
+ <param name="sourceAssemblies">
+    Optionally specify the design-time assemblies available to use as a basis for authoring provided types.
+    The transitive dependencies of these assemblies are also included. By default
+    Assembly.GetCallingAssembly() and its transitive dependencies are used.
+ </param>
+               
+ <param name="assemblyReplacementMap">
+    Optionally specify a map of assembly names from source model to referenced assemblies.
+ </param>
+               
+ <param name="addDefaultProbingLocation">
+    Optionally specify that the location of the type provider design-time component should be used to resolve failing assembly resolutions.
+    This flag or an equivalent call to RegisterProbingFolder is generally needed for any type provider design-time components loaded into .NET Core tooling.
+ </param>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.TypeProviderForNamespaces">
+<summary>
+ A base type providing default implementations of type provider functionality.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.ReferencedAssemblyPaths">
+<summary>
+ Get the list of referenced assemblies determined by the type provider configuration
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.FSharpCoreAssemblyVersion">
+<summary>
+ Try to get the version of FSharp.Core referenced. May raise an exception if FSharp.Core has not been correctly resolved
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.TryBindSimpleAssemblyNameToTarget(System.String)">
+<summary>
+ Try to find the given target assembly in the context
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.TryBindAssemblyNameToTarget(System.Reflection.AssemblyName)">
+<summary>
+ Try to find the given target assembly in the context
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.ReadRelatedAssembly(System.Byte[])">
+<summary>
+ Read the assembly related to this context
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.ReadRelatedAssembly(System.String)">
+<summary>
+ Read the assembly related to this context
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.GetTargetAssemblies">
+<summary>
+ Get the resolved referenced assemblies determined by the type provider configuration
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.GetSourceAssemblies">
+<summary>
+ Get the set of design-time assemblies available to use as a basis for authoring provided types.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.ConvertTargetTypeToSource(System.Type)">
+<summary>
+ Returns the design-time type that corresponds to the given type from the target referenced assemblies.  Normally
+ this method should not be used directly when authoring a type provider.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.ConvertSourceTypeToTarget(System.Type)">
+<summary>
+ Returns a type from the referenced assemblies that corresponds to the given design-time type.  Normally
+ this method should not be used directly when authoring a type provider.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.ConvertSourceExprToTarget(Microsoft.FSharp.Quotations.FSharpExpr)">
+<summary>
+ Returns a quotation rebuilt with resepct to the types from the target referenced assemblies.  Normally
+ this method should not be used directly when authoring a type provider.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypesContext.AddSourceAssembly(System.Reflection.Assembly)">
+<summary>
+ Add an assembly to the set of design-time assemblies available to use as a basis for authoring provided types
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedTypesContext">
+<summary>
+ Represents the context for which code is to be generated. Normally you should not need to use this directly.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.SuppressRelocation(System.Boolean)">
+<summary>
+ Get or set a flag indicating if the ProvidedTypeDefinition has type-relocation suppressed
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.SuppressRelocation">
+<summary>
+ Get or set a flag indicating if the ProvidedTypeDefinition has type-relocation suppressed
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.NonNullable">
+<summary>
+ Disallows the use of the null literal.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.Logger">
+<summary>
+ Get or set a utility function to log the creation of root Provided Type. Used to debug caching/invalidation.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.IsErased">
+<summary>
+ Get a flag indicating if the ProvidedTypeDefinition is erased
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.HideObjectMethods">
+<summary>
+ Suppress Object entries in intellisense menus in instances of this provided type
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.SetEnumUnderlyingType(System.Type)">
+<summary>
+ Set underlying type for generated enums
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.SetBaseTypeDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.Type})">
+<summary>
+ Set the base type to a lazily evaluated value. Use this to delay realization of the base type as late as possible.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.SetBaseType(System.Type)">
+<summary>
+ Set the base type
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.SetAttributes(System.Reflection.TypeAttributes)">
+<summary>
+ Set the attributes on the provided type. This fully replaces the default TypeAttributes.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.EraseType(System.Type)">
+<summary>
+ Emulate the F# type provider type erasure mechanism to get the
+ actual (erased) type. We erase ProvidedTypes to their base type
+ and we erase array of provided type to array of base type. In the
+ case of generics all the generic type arguments are also recursively
+ replaced with the erased-to types
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.DefineStaticParameters(Microsoft.FSharp.Collections.FSharpList{ProviderImplementation.ProvidedTypes.ProvidedStaticParameter},Microsoft.FSharp.Core.FSharpFunc{System.String,Microsoft.FSharp.Core.FSharpFunc{System.Object[],ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition}})">
+<summary>
+ Define the static parameters available on a statically parameterized type
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.DefineMethodOverridesDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Collections.FSharpList{System.Tuple{ProviderImplementation.ProvidedTypes.ProvidedMethod,System.Reflection.MethodInfo}}})">
+<summary>
+ Specifies that the given method bodies implement the given method declarations
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.DefineMethodOverride(ProviderImplementation.ProvidedTypes.ProvidedMethod,System.Reflection.MethodInfo)">
+<summary>
+ Specifies that the given method body implements the given method declaration.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddXmlDocDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary.
+ The documentation is only computed once.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddXmlDocComputed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+ The documentation is re-computed  every time it is required.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddXmlDoc(System.String)">
+<summary>
+ Add XML documentation information to this provided constructor
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddObsoleteAttribute(System.String,Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Add a &apos;Obsolete&apos; attribute to this provided type definition
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddMembersDelayed``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Collections.FSharpList{``0}})">
+<summary>
+ Add a set of members to a ProvidedTypeDefinition, delaying computation of the members until required by the compilation context.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddMembers``1(Microsoft.FSharp.Collections.FSharpList{``0})">
+<summary>
+ Add a set of members to a ProvidedTypeDefinition
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddMemberDelayed``1(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,``0})">
+<summary>
+ Add a member to a ProvidedTypeDefinition, delaying computation of the members until required by the compilation context.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddMember(System.Reflection.MemberInfo)">
+<summary>
+ Add a method, property, nested type or other member to a ProvidedTypeDefinition
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddInterfaceImplementationsDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,Microsoft.FSharp.Collections.FSharpList{System.Type}})">
+<summary>
+ Add the given function as a set of on-demand computed interfaces.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddInterfaceImplementation(System.Type)">
+<summary>
+ Add the given type as an implemented interface.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddDefinitionLocation(System.Int32,System.Int32,System.String)">
+<summary>
+ Add definition location information to the provided type definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddCustomAttribute(System.Reflection.CustomAttributeData)">
+<summary>
+ Add a custom attribute to the provided type definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.AddAssemblyTypesAsNestedTypesDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.Reflection.Assembly})">
+<summary>
+ Add the types of the generated assembly as generative types, where types in namespaces get hierarchically positioned as nested types.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.#ctor(System.Reflection.Assembly,System.String,System.String,Microsoft.FSharp.Core.FSharpOption{System.Type},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ When making a cross-targeting type provider, use this method instead of the corresponding ProvidedTypeDefinition constructor from ProvidedTypes
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition.#ctor(System.String,Microsoft.FSharp.Core.FSharpOption{System.Type},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ When making a cross-targeting type provider, use this method instead of the corresponding ProvidedTypeDefinition constructor from ProvidedTypes
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedTypeDefinition">
+<summary>
+ Represents a provided type definition.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder.One">
+<summary>
+ Gets the measure indicating the &quot;1&quot; unit of measure, that is the unitless measure.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder.Square(System.Type)">
+<summary>
+ Returns the measure indicating the square of a unit of measure, e.g. m * m
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder.SI(System.String)">
+<summary>
+ Returns the measure for an SI unit from the F# core library, where the string is in capitals and US spelling, e.g. Meter
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder.Ratio(System.Type,System.Type)">
+<summary>
+ Returns the measure indicating the ratio of two units of measure, e.g. kg / m
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder.Product(System.Type,System.Type)">
+<summary>
+ Returns the measure indicating the product of two units of measure, e.g. kg * m
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder.Inverse(System.Type)">
+<summary>
+ Returns the measure indicating the inverse of two units of measure, e.g. 1 / s
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder.AnnotateType(System.Type,Microsoft.FSharp.Collections.FSharpList{System.Type})">
+<summary>
+ Returns a type where the type has been annotated with the given types and/or units-of-measure.
+ e.g. float&lt;kg&gt;, Vector&lt;int, kg&gt;
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedMeasureBuilder">
+<summary>
+ Helps create erased provided unit-of-measure annotations.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeBuilder.MakeTupleType(Microsoft.FSharp.Collections.FSharpList{System.Type})">
+<summary>
+ Like FsharpType.MakeTupleType, but will also work with unit-annotated types and provided types
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeBuilder.MakeTupleType(Microsoft.FSharp.Collections.FSharpList{System.Type},System.Boolean)">
+<summary>
+ Like FsharpType.MakeTupleType, but will also work with unit-annotated types and provided types
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeBuilder.MakeGenericType(System.Type,Microsoft.FSharp.Collections.FSharpList{System.Type})">
+<summary>
+ Like typ.MakeGenericType, but will also work with unit-annotated types
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedTypeBuilder.MakeGenericMethod(System.Reflection.MethodInfo,Microsoft.FSharp.Collections.FSharpList{System.Type})">
+<summary>
+ Like methodInfo.MakeGenericMethod, but will also work with unit-annotated types and provided types
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedTypeBuilder">
+<summary>
+ Helpers to build symbolic provided types
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeSymbol.IsFSharpUnitAnnotated">
+<summary>
+ For example, int&lt;kg&gt; or int&lt;kilogram&gt;
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedTypeSymbol.IsFSharpTypeAbbreviation">
+<summary>
+ For example, kg
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedTypeSymbol">
+<summary>
+ Represents an array or other symbolic type involving a provided type as the argument.
+ See the type provider spec for the methods that must be implemented.
+ Note that the type provider specification does not require us to implement pointer-equality for provided types.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.Literal(System.String,System.Type,System.Object)">
+<summary>
+ Create a new provided literal field. It is not initially associated with any specific provided type definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.AddXmlDocDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided field, where the computation of the documentation is delayed until necessary
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.AddXmlDocComputed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided field, where the computation of the documentation is delayed until necessary
+ The documentation is re-computed  every time it is required.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.AddXmlDoc(System.String)">
+<summary>
+ Add XML documentation information to this provided field
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.AddObsoleteAttribute(System.String,Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Add a &apos;Obsolete&apos; attribute to this provided field
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.AddDefinitionLocation(System.Int32,System.Int32,System.String)">
+<summary>
+ Add definition location information to the provided field definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.AddCustomAttribute(System.Reflection.CustomAttributeData)">
+<summary>
+ Add a custom attribute to the provided property definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedField.#ctor(System.String,System.Type)">
+<summary>
+ Create a new provided field. It is not initially associated with any specific provided type definition.
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedField">
+<summary>
+ Represents an erased provided field.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedEvent.IsStatic">
+<summary>
+ Get a flag indicating if the property is static.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedEvent.AddXmlDocDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedEvent.AddXmlDocComputed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+ The documentation is re-computed  every time it is required.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedEvent.AddXmlDoc(System.String)">
+<summary>
+ Add XML documentation information to this provided constructor
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedEvent.AddDefinitionLocation(System.Int32,System.Int32,System.String)">
+<summary>
+ Add definition location information to the provided type definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedEvent.#ctor(System.String,System.Type,Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Create a new provided event. It is not initially associated with any specific provided type definition.
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedEvent">
+<summary>
+ Represents an erased provided property.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedProperty.IsStatic">
+<summary>
+ Get or set a flag indicating if the property is static.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedProperty.AddXmlDocDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedProperty.AddXmlDocComputed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+ The documentation is re-computed  every time it is required.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedProperty.AddXmlDoc(System.String)">
+<summary>
+ Add XML documentation information to this provided constructor
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedProperty.AddObsoleteAttribute(System.String,Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Add a &apos;Obsolete&apos; attribute to this provided property
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedProperty.AddDefinitionLocation(System.Int32,System.Int32,System.String)">
+<summary>
+ Add definition location information to the provided type definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedProperty.AddCustomAttribute(System.Reflection.CustomAttributeData)">
+<summary>
+ Add a custom attribute to the provided property definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedProperty.#ctor(System.String,System.Type,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Quotations.FSharpExpr}},Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Quotations.FSharpExpr}},Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Collections.FSharpList{ProviderImplementation.ProvidedTypes.ProvidedParameter}})">
+<summary>
+ Create a new provided property. It is not initially associated with any specific provided type definition.
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedProperty">
+<summary>
+ Represents an erased provided property.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedMethod.GetInvokeCode">
+<summary>
+ This method is for internal use only in the type provider SDK
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.SetMethodAttrs(System.Reflection.MethodAttributes)">
+<summary>
+ Set the method attributes of the method. By default these are simple &apos;MethodAttributes.Public&apos;
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.DefineStaticParameters(Microsoft.FSharp.Collections.FSharpList{ProviderImplementation.ProvidedTypes.ProvidedStaticParameter},Microsoft.FSharp.Core.FSharpFunc{System.String,Microsoft.FSharp.Core.FSharpFunc{System.Object[],ProviderImplementation.ProvidedTypes.ProvidedMethod}})">
+<summary>
+ Define the static parameters available on a statically parameterized method
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.AddXmlDocDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.AddXmlDocComputed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+ The documentation is re-computed  every time it is required.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.AddXmlDoc(System.String)">
+<summary>
+ Add XML documentation information to this provided constructor
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.AddObsoleteAttribute(System.String,Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Add XML documentation information to this provided method
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.AddDefinitionLocation(System.Int32,System.Int32,System.String)">
+<summary>
+ Add definition location information to the provided type definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.AddCustomAttribute(System.Reflection.CustomAttributeData)">
+<summary>
+ Add a custom attribute to the provided method definition.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedMethod.#ctor(System.String,Microsoft.FSharp.Collections.FSharpList{ProviderImplementation.ProvidedTypes.ProvidedParameter},System.Type,Microsoft.FSharp.Core.FSharpOption{Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Quotations.FSharpExpr}},Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ When making a cross-targeting type provider, use this method instead of the ProvidedMethod constructor from ProvidedTypes
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedConstructor.IsImplicitConstructor(System.Boolean)">
+<summary>
+ Set a flag indicating that the constructor acts like an F# implicit constructor, so the
+ parameters of the constructor become fields and can be accessed using Expr.GlobalVar with the
+ same name.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedConstructor.BaseConstructorCall(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr},System.Tuple{System.Reflection.ConstructorInfo,Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr}}})">
+<summary>
+ Set the target and arguments of the base constructor call. Only used for generated types.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedConstructor.IsImplicitConstructor">
+<summary>
+ Set a flag indicating that the constructor acts like an F# implicit constructor, so the
+ parameters of the constructor become fields and can be accessed using Expr.GlobalVar with the
+ same name.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedConstructor.GetInvokeCode(Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr})">
+<summary>
+ This method is for internal use only in the type provider SDK
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedConstructor.AddXmlDocDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedConstructor.AddXmlDocComputed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the documentation is re-computed  every time it is required.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedConstructor.AddXmlDoc(System.String)">
+<summary>
+ Add XML documentation information to this provided constructor
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedConstructor.AddObsoleteAttribute(System.String,Microsoft.FSharp.Core.FSharpOption{System.Boolean})">
+<summary>
+ Add a &apos;Obsolete&apos; attribute to this provided constructor
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedConstructor.AddDefinitionLocation(System.Int32,System.Int32,System.String)">
+<summary>
+ Add definition location information to the provided constructor.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedConstructor.#ctor(Microsoft.FSharp.Collections.FSharpList{ProviderImplementation.ProvidedTypes.ProvidedParameter},Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Collections.FSharpList{Microsoft.FSharp.Quotations.FSharpExpr},Microsoft.FSharp.Quotations.FSharpExpr})">
+<summary>
+ When making a cross-targeting type provider, use this method instead of the ProvidedConstructor constructor from ProvidedTypes
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedConstructor">
+<summary>
+ Represents an erased provided constructor.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedStaticParameter.AddXmlDocDelayed(Microsoft.FSharp.Core.FSharpFunc{Microsoft.FSharp.Core.Unit,System.String})">
+<summary>
+ Add XML documentation information to this provided constructor, where the computation of the documentation is delayed until necessary
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedStaticParameter.AddXmlDoc(System.String)">
+<summary>
+ Add XML documentation information to this provided constructor
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedStaticParameter.#ctor(System.String,System.Type,Microsoft.FSharp.Core.FSharpOption{System.Object})">
+<summary>
+ Create a new provided static parameter, for use with DefineStaticParamaeters on a provided type definition.
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedStaticParameter">
+<summary>
+ Represents a provided static parameter.
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedParameter.IsReflectedDefinition(System.Boolean)">
+<summary>
+ Indicates if the parameter is marked as ReflectedDefinition
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedParameter.IsParamArray(System.Boolean)">
+<summary>
+ Indicates if the parameter is marked as ParamArray
+</summary>
+</member>
+<member name="P:ProviderImplementation.ProvidedTypes.ProvidedParameter.HasDefaultParameterValue">
+<summary>
+ Indicates if the parameter has a default value
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedParameter.AddCustomAttribute(System.Reflection.CustomAttributeData)">
+<summary>
+ Add a custom attribute to the provided parameter.
+</summary>
+</member>
+<member name="M:ProviderImplementation.ProvidedTypes.ProvidedParameter.#ctor(System.String,System.Type,Microsoft.FSharp.Core.FSharpOption{System.Boolean},Microsoft.FSharp.Core.FSharpOption{System.Object})">
+<summary>
+ Create a new provided parameter.
+</summary>
+</member>
+<member name="T:ProviderImplementation.ProvidedTypes.ProvidedParameter">
+<summary>
+ Represents an erased provided parameter
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.tryVisit(System.Linq.Expressions.Expression)">
+<summary>
+ Expression tree visitor: go through the whole expression tree.
+ Catches the exceptions.
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.visit(System.Linq.Expressions.Expression)">
+<summary>
+ Expression tree visitor: go through the whole expression tree.
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.doReduction(System.Linq.Expressions.Expression)">
+<summary>
+ Does reductions just for a current node.
+</summary>
+</member>
+<member name="P:ExpressionOptimizer.reductionMethods">
+<summary>
+ Used optimization methods
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.evaluate basic constant math(System.Linq.Expressions.Expression)">
+<summary>
+ Evaluate simple math between two constants.
+  9  *  3     --&gt;    27
+ &quot;G&quot; + &quot;G&quot;    --&gt;   &quot;GG&quot;
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.evaluate constants(System.Linq.Expressions.Expression)">
+<summary>
+ Evaluating constants to not mess with our expressions:
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.balancetree(System.Linq.Expressions.Expression)">
+<summary>
+ Balance tree that is too much weighted to other side.
+ The real advantage is not-so-nested-stack
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.distribute(System.Linq.Expressions.Expression)">
+<summary>
+ Not in use, would cause looping...
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.associate(System.Linq.Expressions.Expression)">
+<summary>
+ Not in use, would cause looping...
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.not false is true(System.Linq.Expressions.Expression)">
+<summary>
+ not(false) -&gt; true 
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.cut not used condition(System.Linq.Expressions.Expression)">
+<summary>
+ if false then x else y -&gt; y 
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.remove AnonymousType(System.Linq.Expressions.Expression)">
+<summary>
+ Purpose of this is to replace non-used anonymous types:
+ new AnonymousObject(Item1 = x, Item2 = &quot;&quot;).Item1    --&gt;   x
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.replace constant comparison(System.Linq.Expressions.Expression)">
+<summary>
+ Purpose of this is optimize away already known constant=constant style expressions.
+   7 &gt; 8      --&gt;   False
+ &quot;G&quot; = &quot;G&quot;    --&gt;   True
+</summary>
+</member>
+<member name="M:ExpressionOptimizer.Methods.constant basic type(System.Linq.Expressions.Expression,System.Linq.Expressions.Expression)">
+<summary>
+ We want to eliminate enum-types and constants like 1 or &quot;a&quot;.
+ But Constant value can be also another complex object like IQueryable.
+ We don&apos;t want to evaluate those!
+</summary>
+</member>
+<member name="T:ExpressionOptimizer">
+<summary>
+ This is just a light-weight expression optimizer.
+ It won&apos;t do any heavy stuff...
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Operators.Variance``1(``0)">
+<summary>
+ Variance
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Operators.StdDev``1(``0)">
+<summary>
+ Standard Deviation
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Operators.leftJoin``1(``0)">
+<summary>
+ Left join
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Operators.op_LessGreaterPercent``1(``0,System.String)">
+<summary>
+ Not Like
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Operators.op_EqualsPercent``1(``0,System.String)">
+<summary>
+ Like
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Operators.op_BarLessGreaterBar``1(``0,System.Collections.Generic.IEnumerable{``0})">
+<summary>
+ Not In
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Transactions.TransactionOptions">
+<summary>
+ Corresponds to the System.Transactions.TransactionOptions.
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Transactions.IsolationLevel">
+<summary>
+ Corresponds to the System.Transactions.IsolationLevel.
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Common.GroupResultItems`2">
+<summary>
+ GroupResultItems is an item to create key-igrouping-structure.
+ From the select group-by projection, aggregate operations like Enumerable.Count() 
+ is replaced to GroupResultItems.AggregateCount call and this is used to fetch the 
+ SQL result instead of actually counting anything
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.ProcessUpdatesAsync(System.Data.Common.DbConnection,System.Collections.Concurrent.ConcurrentDictionary{FSharp.Data.Sql.Common.SqlEntity,System.DateTime},FSharp.Data.Sql.Transactions.TransactionOptions,Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+<summary>
+ Asynchronously writes all pending database changes to database
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.ProcessUpdates(System.Data.IDbConnection,System.Collections.Concurrent.ConcurrentDictionary{FSharp.Data.Sql.Common.SqlEntity,System.DateTime},FSharp.Data.Sql.Transactions.TransactionOptions,Microsoft.FSharp.Core.FSharpOption{System.Int32})">
+<summary>
+ Writes all pending database changes to database
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetTables(System.Data.IDbConnection,FSharp.Data.Sql.Common.CaseSensitivityChange)">
+<summary>
+ Queries the information schema and returns a list of table information
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetTableDescription(System.Data.IDbConnection,System.String)">
+<summary>
+ Queries table descriptions / comments for tooltip-info, table name to description
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetSprocs(System.Data.IDbConnection)">
+<summary>
+ Returns a list of stored procedure metadata
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetSchemaCache">
+<summary>
+ Returns cached schema information, depending on the provider the cached schema may contain the whole database schema or only the schema for entities referenced in the current context
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetRelationships(System.Data.IDbConnection,FSharp.Data.Sql.Schema.Table)">
+<summary>
+ Returns constraint information for a given table, returning two lists of relationships, where
+ the first are relationships where the table is the primary entity, and the second where
+ it is the foreign entity
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetPrimaryKey(FSharp.Data.Sql.Schema.Table)">
+<summary>
+ Returns the primary key column for a given table from the pre-populated cache
+ as generated by calls to GetColumns
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetLockObject">
+<summary>
+Provider specific lock to do provider specific locking
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetIndividualsQueryText(FSharp.Data.Sql.Schema.Table,System.Int32)">
+<summary>
+ Returns the db vendor specific SQL  query to select the top x amount of rows from
+ the given table
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetIndividualQueryText(FSharp.Data.Sql.Schema.Table,System.String)">
+<summary>
+ Returns the db vendor specific SQL query to select a single row based on the table and column name specified
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetColumns(System.Data.IDbConnection,FSharp.Data.Sql.Schema.Table)">
+<summary>
+ Queries the given table and returns a list of its columns
+ this function should also populate a primary key cache for tables that
+ have a single non-composite primary key
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GetColumnDescription(System.Data.IDbConnection,System.String,System.String)">
+<summary>
+ Queries column descriptions / comments for tooltip-info, table name, column name to description
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.GenerateQueryText(FSharp.Data.Sql.Common.SqlQuery,System.String,FSharp.Data.Sql.Schema.Table,System.Collections.Generic.Dictionary{System.String,System.Collections.Generic.List{FSharp.Data.Sql.ColumnSchema.ProjectionParameter}},System.Boolean,System.Data.IDbConnection)">
+<summary>
+ Accepts a SqlQuery object and produces the SQL to execute on the server.
+ the other parameters are the base table alias, the base table, and a dictionary containing
+ the columns from the various table aliases that are in the SELECT projection
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.ExecuteSprocCommandAsync(System.Data.Common.DbCommand,FSharp.Data.Sql.Schema.QueryParameter[],FSharp.Data.Sql.Schema.QueryParameter[],System.Object[])">
+<summary>
+Builds a command representing a call to a stored procedure, executing async
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.ExecuteSprocCommand(System.Data.IDbCommand,FSharp.Data.Sql.Schema.QueryParameter[],FSharp.Data.Sql.Schema.QueryParameter[],System.Object[])">
+<summary>
+Builds a command representing a call to a stored procedure
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.CreateTypeMappings(System.Data.IDbConnection)">
+<summary>
+ This function will be called when the provider is first created and should be used
+ to generate a cache of type mappings, and to set the three mapping function properties
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.CreateConnection(System.String)">
+<summary>
+ return a new, unopened connection using the provided connection string
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.CreateCommandParameter(FSharp.Data.Sql.Schema.QueryParameter,System.Object)">
+<summary>
+ return a new command parameter with the provided name, value and optionally type, direction and length
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.ISqlProvider.CreateCommand(System.Data.IDbConnection,System.String)">
+<summary>
+ return a new command associated with the provided connection and command text
+</summary>
+</member>
+<member name="F:FSharp.Data.Sql.Common.SqlEntity.OnConflict@">
+<summary>
+ Determines what should happen when saving this entity if it is newly-created but another entity with the same primary key already exists
+</summary>
+</member>
+<member name="P:FSharp.Data.Sql.Common.SqlEntity.OnConflict(FSharp.Data.Sql.Common.OnConflict)">
+<summary>
+ Determines what should happen when saving this entity if it is newly-created but another entity with the same primary key already exists
+</summary>
+</member>
+<member name="P:FSharp.Data.Sql.Common.SqlEntity.OnConflict">
+<summary>
+ Determines what should happen when saving this entity if it is newly-created but another entity with the same primary key already exists
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.SqlEntity.GetSubTable(System.String,System.String)">
+<summary>
+ creates a new SQL entity from alias data in this entity
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.SqlEntity.CloneTo(FSharp.Data.Sql.Common.ISqlDataContext,System.Boolean)">
+<summary>
+ Attach/copy entity to a different data-context.
+ Second parameter: SQL UPDATE or INSERT clause?  
+ UPDATE: Updates the exising database entity with the values that this entity contains.
+ INSERT: Makes a copy of entity (database row), which is a new row with the same columns and values (except Id)
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.SqlEntity.Clone">
+<summary>
+ Makes a copy of entity (database row), which is a new row with the same columns and values (except Id)
+ If column primaty key is something else and not-auto-generated, then, too bad...
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Common.OnConflict.DoNothing">
+<summary>
+ If the primary key already exists, leaves the existing row unchanged.
+ Currently supported only on PostgreSQL 9.5+
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Common.OnConflict.Update">
+<summary>
+ If the primary key already exists, updates the existing row&apos;s columns to match the new entity.
+ Currently supported only on PostgreSQL 9.5+
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Common.OnConflict.Throw">
+<summary>
+ Throws an exception if the primary key already exists (default behaviour).
+</summary>
+</member>
+<member name="F:FSharp.Data.Sql.Common.OdbcQuoteCharacter.APHOSTROPHE">
+<summary>
+ Single quote: &apos;alias&apos;
+</summary>
+</member>
+<member name="F:FSharp.Data.Sql.Common.OdbcQuoteCharacter.DOUBLE_QUOTES">
+<summary>
+ Amazon Redshift style: &quot;alias&quot; &amp; Firebird style too
+</summary>
+</member>
+<member name="F:FSharp.Data.Sql.Common.OdbcQuoteCharacter.NO_QUOTES">
+<summary>
+ Plain, no special names: alias
+</summary>
+</member>
+<member name="F:FSharp.Data.Sql.Common.OdbcQuoteCharacter.SQUARE_BRACKETS">
+<summary>
+ Microsoft SQL style: [alias]
+</summary>
+</member>
+<member name="F:FSharp.Data.Sql.Common.OdbcQuoteCharacter.GRAVE_ACCENT">
+<summary>
+ MySQL/Postgre style: `alias` 
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.Sql.evaluateOneByOne``2(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Control.FSharpAsync{``1}},Microsoft.FSharp.Collections.FSharpList{``0})">
+<summary>
+ Helper function to run async computation non-parallel style for list of objects.
+ This is needed if async database opreation is executed for a list of entities.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.SchemaProjections.avoidNameClashBy(Microsoft.FSharp.Core.FSharpFunc{System.String,System.Boolean},System.String)">
+<summary>
+ Add &apos; until the name is unique
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.SchemaProjections.niceCamelName(System.String)">
+<summary>
+ Turns a given non-empty string into a nice &apos;camelCase&apos; identifier
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.SchemaProjections.nicePascalName(System.String)">
+<summary>
+ Turns a given non-empty string into a nice &apos;PascalCase&apos; identifier
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.Utilities.genericFieldNotation(Microsoft.FSharp.Core.FSharpFunc{FSharp.Data.Sql.ColumnSchema.SqlColumnType,System.String},Microsoft.FSharp.Core.FSharpFunc{System.String,System.String},FSharp.Data.Sql.ColumnSchema.SqlColumnType)">
+<summary>
+ Standard SQL. Provider spesific overloads can be done before this.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.Utilities.executeOneByOne``1(Microsoft.FSharp.Core.FSharpFunc{``0,Microsoft.FSharp.Control.FSharpAsync{Microsoft.FSharp.Core.Unit}},Microsoft.FSharp.Collections.FSharpList{``0})">
+<summary>
+ DB-connections are not usually supporting parallel SQL-query execution, so even when
+ async thread is available, it can&apos;t be used to execute another SQL at the same time.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.OfflineTools.mergeCacheFiles(System.String,System.String,System.String)">
+<summary>
+ Merges two ContexSchemaPath offline schema files into one target schema file.
+ This is a tool method that can be useful in multi-project solution using the same database with different tables.
+</summary>
+</member>
+<member name="P:FSharp.Data.Sql.Common.QueryEvents.SqlEventData.ConnectionStringHash">
+<summary>
+ The SHA256 hash of the UTF8-encoded connection string used to perform this command.
+ Use this to determine on which database connection the command is going to be executed.
+</summary>
+</member>
+<member name="P:FSharp.Data.Sql.Common.QueryEvents.SqlEventData.Parameters">
+<summary>
+ The parameters (if any) passed to the SQL command being executed.
+</summary>
+</member>
+<member name="P:FSharp.Data.Sql.Common.QueryEvents.SqlEventData.Command">
+<summary>
+ The text of the SQL command being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Common.QueryEvents.SqlEventData.ToRawSql">
+<summary>
+ Use this to execute similar queries to test the result of the executed query.
+</summary>
+</member>
+<member name="P:FSharp.Data.Sql.Common.QueryEvents.SqlQueryEvent">
+<summary>
+ This event fires immediately before the execution of every generated query. 
+ Listen to this event to display or debug the content of your queries.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Ssdt.DacpacParser.parseXml(System.String)">
+<summary>
+ Parses the xml that is extracted from a .dacpac file.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Ssdt.DacpacParser.toXmlNamespaceDoc``2(System.String,System.String)">
+<summary>
+ Returns a doc and node/nodes ns helper fns
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Ssdt.DacpacParser.extractModelXml(System.String)">
+<summary>
+ Extracts model.xml from the given .dacpac file path.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Ssdt.DacpacParser.RegexParsers.parseViewAnnotations(System.String)">
+<summary>
+ Tries to find in-line commented type annotations in a view declaration.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Ssdt.DacpacParser.RegexParsers.parseTableColumnAnnotation(System.String,System.String)">
+<summary>
+ Tries to find an in-line commented type annotation in a computed table column.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Ssdt.DacpacParser.RegexParsers.splitFullName(System.String)">
+<summary>
+ Splits a fully qualified name into parts. 
+ Name can start with a letter, _, @ or #. Names in square brackets can contain any char except for square brackets.
+</summary>
+</member>
+<member name="P:FSharp.Data.Sql.Providers.MSSqlServerSsdt.parseDacpac">
+<summary>
+ Tries to parse a schema model from the given .dacpac file path.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Providers.MSSqlServerSsdt.findDacPacFile(System.String)">
+<summary>
+ Tries to find .dacpac file using the given path at design time or by searching the runtime assembly path.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Providers.PostgreSQL.namemap(System.String,Microsoft.FSharp.Collections.FSharpList{System.String})">
+<summary>
+ Pairs a CLR type by name with a value of Npgsql&apos;s type enumeration
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Providers.PostgreSQL.typemap``1">
+<summary>
+ Pairs a CLR type by type parameter with a value of Npgsql&apos;s type enumeration
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Providers.PostgreSQL.typemap'``1(``0)">
+<summary>
+ Pairs a CLR type by type object with a value of Npgsql&apos;s type enumeration
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.List.executeQueryAsync``1(System.Linq.IQueryable{``0})">
+<summary>
+ Execute SQLProvider query and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.List.evaluateOneByOne``2">
+<summary>
+ Helper function to run async computation non-parallel style for list of objects.
+ This is needed if async database opreation is executed for a list of entities.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Array.executeQueryAsync``1(System.Linq.IQueryable{``0})">
+<summary>
+ Execute SQLProvider query and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.tryExactlyOneAsync``1">
+<summary>
+ Execute SQLProvider query to get the only element of the sequence.
+ Returns `None` if there are zero or more than one element in the seq.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.exactlyOneAsync``1">
+<summary>
+ Execute SQLProvider query to get the only element of the sequence.
+ Throws `ArgumentNullException` if the seq is empty.
+ Throws `ArgumentException` if the seq contains more than one element.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.delete all items from single table``1(System.Linq.IQueryable{``0})">
+<summary>
+ WARNING! Execute SQLProvider DELETE FROM query to remove elements from the database.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.varianceAsync``1">
+<summary>
+ Execute SQLProvider query to get the variance of elements, and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.stdDevAsync``1">
+<summary>
+ Execute SQLProvider query to get the standard deviation of elements, and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.averageAsync``1">
+<summary>
+ Execute SQLProvider query to get the avg of elements, and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.minAsync``1">
+<summary>
+ Execute SQLProvider query to get the min of elements, and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.maxAsync``1">
+<summary>
+ Execute SQLProvider query to get the max of elements, and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.sumAsync``1">
+<summary>
+ Execute SQLProvider query to get the sum of elements, and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.tryHeadAsync``1">
+<summary>
+ Execute SQLProvider query to take one result and release the OS thread while query is being executed.
+ Returns None if no elements exists.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.headAsync``1">
+<summary>
+ Execute SQLProvider query to take one result and release the OS thread while query is being executed.
+ Like normal head: Throws exception if no elements exists. See also tryHeadAsync.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.lengthAsync``1">
+<summary>
+ Execute SQLProvider query to count the elements, and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Seq.executeQueryAsync``1">
+<summary>
+ Execute SQLProvider query and release the OS thread while query is being executed.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Runtime.Seq.varianceQuery``1">
+<summary>
+ Execute SQLProvider query to get the variance of elements.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Runtime.Seq.stdDevQuery``1">
+<summary>
+ Execute SQLProvider query to get the standard deviation of elements.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Runtime.Seq.averageQuery``1">
+<summary>
+ Execute SQLProvider query to get the avg of elements.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Runtime.Seq.minQuery``1">
+<summary>
+ Execute SQLProvider query to get the min of elements.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Runtime.Seq.maxQuery``1">
+<summary>
+ Execute SQLProvider query to get the max of elements.
+</summary>
+</member>
+<member name="M:FSharp.Data.Sql.Runtime.Seq.sumQuery``1">
+<summary>
+ Execute SQLProvider query to get the sum of elements.
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Runtime.QueryImplementation.SqlGroupingQueryable`2">
+<summary>
+ Structure to make it easier to return IGrouping from GroupBy
+</summary>
+</member>
+<member name="T:FSharp.Data.Sql.Runtime.QueryImplementation.IAsyncEnumerable`1">
+<summary>
+ Interface for async enumerations as .NET doesn&apos;t have it out-of-the-box
+</summary>
+</member>
+</members>
+</doc>

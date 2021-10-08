@@ -4,7 +4,7 @@ namespace FSharp.Data.Sql.Providers
 open System
 open System.Collections.Concurrent
 open System.Data
-open Microsoft.Data.SqlClient
+open System.Data.SqlClient
 open System.IO
 open System.Reflection
 open System.Text

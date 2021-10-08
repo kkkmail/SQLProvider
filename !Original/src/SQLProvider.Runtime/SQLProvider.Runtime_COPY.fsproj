@@ -1,0 +1,75 @@
+<Project>
+  <!-- See https://stackoverflow.com/questions/43921992/how-can-i-use-beforebuild-and-afterbuild-targets-with-visual-studio-2017 -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
+    <DefineConstants>TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
+    <AssemblyName>FSharp.Data.SqlProvider</AssemblyName>
+    <Name>FSharp.Data.SqlProvider</Name>
+    <DocumentationFile>..\..\bin\net6.0\FSharp.Data.SqlProvider.XML</DocumentationFile>
+    <OutputPath>..\..\bin\</OutputPath>
+    <PackageReleaseNotes>https://github.com/fsprojects/SQLProvider/blob/master/docs/RELEASE_NOTES.md</PackageReleaseNotes>
+    <PackageProjectUrl>https://fsprojects.github.io/SQLProvider</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fsprojects/SQLProvider</RepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <Optimize>true</Optimize>
+    <Tailcalls>true</Tailcalls>
+  </PropertyGroup>
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+  <ItemGroup>
+
+    <Compile Include="..\Common\AssemblyInfo.fs">
+      <Link>AssemblyInfo.fs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\sourcefiles\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fsi">
+      <Paket>True</Paket>
+      <Link>paket-files/ProvidedTypes.fsi</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\sourcefiles\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/ProvidedTypes.fs</Link>
+    </Compile>
+    <Compile Include="..\..\paket-files\sourcefiles\Thorium\Linq.Expression.Optimizer\src\Code\ExpressionOptimizer.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/ExpressionOptimizer.fs</Link>
+    </Compile>
+    <Compile Include="Operators.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="SqlSchema.fs" />
+    <Compile Include="DataTable.fs" />
+    <Compile Include="SqlRuntime.Patterns.fs" />
+    <Compile Include="QuotationHelpers.fs" />
+    <Compile Include="SqlRuntime.Transactions.fs" />
+    <Compile Include="SqlRuntime.Common.fs" />
+    <Compile Include="Ssdt.DacpacParser.fs" />
+    <Compile Include="Providers.MsSqlServer.fs" />
+    <Compile Include="Providers.MsSqlServer.Dynamic.fs" />
+    <Compile Include="Providers.MsSqlServer.Ssdt.fs" />
+    <Compile Include="Providers.MSAccess.fs" />
+    <Compile Include="Providers.MySql.fs" />
+    <Compile Include="Providers.Odbc.fs" />
+    <Compile Include="Providers.Oracle.fs" />
+    <Compile Include="Providers.Postgresql.fs" />
+    <Compile Include="Providers.SQLite.fs" />
+    <Compile Include="Providers.Firebird.fs" />
+    <Compile Include="SqlRuntime.QueryExpression.fs" />
+    <Compile Include="SqlRuntime.Linq.fs" />
+    <Compile Include="SqlRuntime.Async.fs" />
+    <Compile Include="SqlRuntime.DataContext.fs" />
+  </ItemGroup>
+  <Target Name="BeforeBuild">
+    <MSBuild Projects="..\SQLProvider.DesignTime\SQLProvider.DesignTime.fsproj" Targets="Restore" />
+    <MSBuild Projects="..\SQLProvider.DesignTime\SQLProvider.DesignTime.fsproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=net6.0" />
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  <Import Project="..\..\.paket\Paket.Restore.targets" />
+</Project>

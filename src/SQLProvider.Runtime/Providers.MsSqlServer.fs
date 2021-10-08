@@ -4,7 +4,7 @@ open System
 open System.Collections.Concurrent
 open System.Collections.Generic
 open System.Data
-open System.Data.SqlClient
+open Microsoft.Data.SqlClient
 open FSharp.Data.Sql
 open FSharp.Data.Sql.Transactions
 open FSharp.Data.Sql.Schema

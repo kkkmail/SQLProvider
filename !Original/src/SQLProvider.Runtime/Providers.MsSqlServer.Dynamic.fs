@@ -60,7 +60,7 @@ module MSSqlServerDynamic =
         con.Close()
         res
 
-    let parseDbType (dbTypeName : string) =
+    let parseDbType dbTypeName =
         try Some(Enum.Parse(enumType.Value, dbTypeName) |> unbox<int>)
         with _ -> None
 
