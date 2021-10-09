@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "4558478e-769c-43b1-9226-6fa5e96ebcc1": {
+      "ProjectGuid": "4558478e-769c-43b1-9226-6fa5e96ebcc1",
+      "DisplayName": "SQLProvider.DesignTime_NET6",
+      "ColorIndex": 0
+    },
+    "6e85bdc8-503e-456b-9171-be9e1788033f": {
+      "ProjectGuid": "6e85bdc8-503e-456b-9171-be9e1788033f",
+      "DisplayName": "SQLProvider.Runtime_NET6",
+      "ColorIndex": 1
+    },
+    "207c5943-20af-4b05-a607-da3ec30de448": {
+      "ProjectGuid": "207c5943-20af-4b05-a607-da3ec30de448",
+      "DisplayName": "SQLProvider.Runtime_NET6",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}

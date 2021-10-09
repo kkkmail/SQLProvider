@@ -28,6 +28,8 @@
           "net6.0"
         ],
         "sources": {
+          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\bin\\Release": {},
+          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\bin\\Release": {},
           "C:\\GitHub\\Softellect\\Messaging\\bin\\x64\\Release": {},
           "C:\\GitHub\\Softellect\\Sys\\bin\\x64": {},
           "C:\\GitHub\\Softellect\\Wcf\\bin\\x64\\Release": {},
@@ -50,7 +52,7 @@
             "FSharp.Core": {
               "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
               "target": "Package",
-              "version": "[5.0.0-beta.*, )",
+              "version": "[6.0.0, )",
               "generatePathProperty": true
             },
             "Microsoft.Data.SqlClient": {

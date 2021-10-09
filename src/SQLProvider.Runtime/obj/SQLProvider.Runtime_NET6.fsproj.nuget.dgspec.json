@@ -1,0 +1,174 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\SQLProvider.Runtime_NET6.fsproj": {}
+  },
+  "projects": {
+    "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\SQLProvider.DesignTime_NET6.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\SQLProvider.DesignTime_NET6.fsproj",
+        "projectName": "FSharp.Data.SqlProvider.DesignTime",
+        "projectPath": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\SQLProvider.DesignTime_NET6.fsproj",
+        "packagesPath": "C:\\Users\\kkkma\\.nuget\\packages\\",
+        "outputPath": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\kkkma\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\bin\\Release": {},
+          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\bin\\Release": {},
+          "C:\\GitHub\\Softellect\\Messaging\\bin\\x64\\Release": {},
+          "C:\\GitHub\\Softellect\\Sys\\bin\\x64": {},
+          "C:\\GitHub\\Softellect\\Wcf\\bin\\x64\\Release": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json": {},
+          "https://pkgs.dev.azure.com/dotnet/CoreWCF/_packaging/CoreWCF/nuget/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[6.0.0, )",
+              "generatePathProperty": true
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.0.0-preview2.21264.2, )",
+              "generatePathProperty": true
+            },
+            "System.Data.OleDb": {
+              "target": "Package",
+              "version": "[6.0.0-rc.1.21451.13, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100-rc.1.21463.6\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\SQLProvider.Runtime_NET6.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\SQLProvider.Runtime_NET6.fsproj",
+        "projectName": "FSharp.Data.SqlProvider",
+        "projectPath": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\SQLProvider.Runtime_NET6.fsproj",
+        "packagesPath": "C:\\Users\\kkkma\\.nuget\\packages\\",
+        "outputPath": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\kkkma\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\bin\\Release": {},
+          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\bin\\Release": {},
+          "C:\\GitHub\\Softellect\\Messaging\\bin\\x64\\Release": {},
+          "C:\\GitHub\\Softellect\\Sys\\bin\\x64": {},
+          "C:\\GitHub\\Softellect\\Wcf\\bin\\x64\\Release": {},
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json": {},
+          "https://pkgs.dev.azure.com/dotnet/CoreWCF/_packaging/CoreWCF/nuget/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\SQLProvider.DesignTime_NET6.fsproj": {
+                "projectPath": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\SQLProvider.DesignTime_NET6.fsproj"
+              }
+            }
+          }
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[6.0.0, )",
+              "generatePathProperty": true
+            },
+            "Microsoft.Data.SqlClient": {
+              "target": "Package",
+              "version": "[4.0.0-preview2.21264.2, )",
+              "generatePathProperty": true
+            },
+            "System.Data.OleDb": {
+              "target": "Package",
+              "version": "[6.0.0-rc.1.21451.13, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100-rc.1.21463.6\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

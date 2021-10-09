@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <AssemblyName>FSharp.Data.SqlProvider</AssemblyName>
+    <RootNamespace>FSharp.Data.SqlProvider</RootNamespace>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DefineConstants>TRACE;TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DefineConstants>TRACE;TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Common\AssemblyInfo.fs" Link="AssemblyInfo.fs" />
+    <Compile Include="..\..\paket-files\sourcefiles\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fsi" Link="ProvidedTypes.fsi" />
+    <Compile Include="..\..\paket-files\sourcefiles\fsprojects\FSharp.TypeProviders.SDK\src\ProvidedTypes.fs" Link="ProvidedTypes.fs" />
+    <Compile Include="..\..\paket-files\sourcefiles\Thorium\Linq.Expression.Optimizer\src\Code\ExpressionOptimizer.fs" Link="ExpressionOptimizer.fs" />
+    <Compile Include="Operators.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="SqlSchema.fs" />
+    <Compile Include="DataTable.fs" />
+    <Compile Include="SqlRuntime.Patterns.fs" />
+    <Compile Include="QuotationHelpers.fs" />
+    <Compile Include="SqlRuntime.Transactions.fs" />
+    <Compile Include="SqlRuntime.Common.fs" />
+    <Compile Include="Ssdt.DacpacParser.fs" />
+    <Compile Include="Providers.MsSqlServer.fs" />
+    <Compile Include="Providers.MsSqlServer.Dynamic.fs" />
+    <Compile Include="Providers.MsSqlServer.Ssdt.fs" />
+    <Compile Include="Providers.MSAccess.fs" />
+    <Compile Include="Providers.MySql.fs" />
+    <Compile Include="Providers.Oracle.fs" />
+    <Compile Include="Providers.Postgresql.fs" />
+    <Compile Include="Providers.SQLite.fs" />
+    <Compile Include="Providers.Firebird.fs" />
+    <Compile Include="SqlRuntime.QueryExpression.fs" />
+    <Compile Include="SqlRuntime.Linq.fs" />
+    <Compile Include="SqlRuntime.Async.fs" />
+    <Compile Include="SqlRuntime.DataContext.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="4.0.0-preview2.21264.2" />
+    <PackageReference Include="System.Data.OleDb" Version="6.0.0-rc.1.21451.13" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SQLProvider.DesignTime\SQLProvider.DesignTime_NET6.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="FSharp.Core" Version="6.0.0" />
+  </ItemGroup>
+
+</Project>
