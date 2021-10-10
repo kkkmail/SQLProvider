@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>SQLProvider</id>
-    <version>1.2.9.4-net6-x64</version>
+    <version>1.2.9.5-net6-x64</version>
     <authors>Ross McKinlay, Colin Bull, Tuomas Hietanen, modified by Konstantin Konstantinov</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">MIT</license>

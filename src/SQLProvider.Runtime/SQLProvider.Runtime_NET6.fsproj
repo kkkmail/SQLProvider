@@ -7,23 +7,7 @@
     <AssemblyName>FSharp.Data.SqlProvider</AssemblyName>
     <RootNamespace>FSharp.Data.SqlProvider</RootNamespace>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Platforms>AnyCPU;x64</Platforms>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DefineConstants>TRACE;TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
-    <OtherFlags>--warnaserror+:25 --platform:x64</OtherFlags>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;TP_RUNTIME;NETSTANDARD;NO_GENERATIVE</DefineConstants>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
