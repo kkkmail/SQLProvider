@@ -1,0 +1,54 @@
+NuGet Version: 5.8.1.7021
+usage: NuGet pack <nuspec | project> [options]
+
+Creates a NuGet package based on the specified nuspec or project file.
+
+     Specify the location of the nuspec or project file to create a package.
+
+options:
+
+ -OutputDirectory                                                                  Specifies the directory for the created NuGet package file. If not specified, uses the current directory.
+ -BasePath                                                                         The base path of the files defined in the nuspec file.
+ -Version                                                                          Overrides the version number from the nuspec file.
+ -Suffix                                                                           Appends a pre-release suffix to the internally generated version number.
+ -Exclude +                                                                        Specifies one or more wildcard patterns to exclude when creating a package.
+ -Symbols                                                                          Determines if a package containing sources and symbols should be created. When specified with a nuspec, creates a regul
+                                          ar NuGet package file and the corresponding symbols package.
+ -Tool                                                                             Determines if the output files of the project should be in the tool folder.
+ -Build                                                                            Determines if the project should be built before building the package.
+ -NoDefaultExcludes                                                                Prevent default exclusion of NuGet package files and files and folders starting with a dot e.g. .svn.
+ -NoPackageAnalysis                                                                Specify if the command should not run package analysis after building the package.
+ -ExcludeEmptyDirectories                                                          Prevent inclusion of empty directories when building the package.
+ -IncludeReferencedProjects                                                        Include referenced projects either as dependencies or as part of the package.
+ -Properties +                       (p)                                           Provides the ability to specify a semicolon ";" delimited list of properties when creating a package.
+ -MinClientVersion                                                                 Set the minClientVersion attribute for the created package.
+ -SymbolPackageFormat                                                              When creating a symbols package, allows to choose between the 'snupkg' and 'symbols.nupkg' format.
+ -PackagesDirectory                                                                Specifies the packages folder.
+ -SolutionDirectory                                                                Specifies the solution directory.
+ -MSBuildVersion                                                                   Specifies the version of MSBuild to be used with this command. Supported values are 4, 12, 14, 15.1, 15.3, 15.4, 15.5,
+                                          15.6, 15.7, 15.8, 15.9, 16.0. By default the MSBuild in your path is picked, otherwise it defaults to the highest insta
+                                          lled version of MSBuild.
+ -MSBuildPath                                                                      Specifies the path of MSBuild to be used with this command. This command will takes precedence over MSbuildVersion, nug
+                                          et will always pick MSbuild from this specified path.
+ -InstallPackageToOutputPath                                                       Specify if the command should prepare the package output directory to support share as feed.
+ -OutputFileNamesWithoutVersion                                                    Specify if the command should prepare the package output name without the version.
+ -ConfigFile                                                                       Specify the configuration file for the pack command.
+ -Help                               (?)                                           help
+ -Verbosity                                                                        Display this amount of details in the output: normal, quiet, detailed.
+ -NonInteractive                                                                   Do not prompt for user input or confirmations.
+ -ForceEnglishOutput                                                               Forces the application to run using an invariant, English-based culture.
+
+examples:
+
+nuget pack
+
+nuget pack foo.nuspec
+
+nuget pack foo.csproj
+
+nuget pack foo.csproj -Build -Symbols -Properties Configuration=Release
+
+nuget pack foo.nuspec -Version 2.1.0
+
+For more information, visit https://docs.nuget.org/docs/reference/command-line-reference
+

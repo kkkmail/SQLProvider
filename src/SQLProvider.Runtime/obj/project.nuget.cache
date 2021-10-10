@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "pZ5V2Zrqvoc3OKJhGig3FKmEPtthnO+A6hyH0vPpSw4BhgkWTcYMK+h3bLT26wXNJUuvHlkGFJnsWH+g0vZttQ==",
+  "dgSpecHash": "CJm5iqQPyXC1/0Rbvo7RwG/zW2n5E/IIkZSzkR833Ra2W81//l0ElTzqtdnxfnX5yL46cE4p85eXzpgrUeqXGA==",
   "success": true,
   "projectFilePath": "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\SQLProvider.Runtime_NET6.fsproj",
   "expectedPackageFiles": [

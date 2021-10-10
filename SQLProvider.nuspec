@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>SQLProvider</id>
+    <version>1.2.9.2-net6</version>
+    <authors>Ross McKinlay, Colin Bull, Tuomas Hietanen, modified by Konstantin Konstantinov</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/mykolav/require-named-args-fs</projectUrl>
+    <description>Type providers for SQL database access.</description>
+    <copyright>Ross McKinlay, Colin Bull, Tuomas Hietanen</copyright>
+    <tags>F#, fsharp, typeprovider, sql, sqlserver</tags>
+    <repository url="https://github.com/fsprojects/SQLProvider" />
+    <releaseNotes>Look for method definitions marked with a `[RequireNamedArgs]` attribute instead of a special comment. Fixed by kkkmail to support extension method calls.</releaseNotes>  
+
+  <dependencies>
+    <group>
+      <dependency id="FSharp.Core" version="6.0.0" />
+    </group>
+  </dependencies>  
+  </metadata>
+  <files>
+    <file src="src\SQLProvider.Runtime\bin\Release\net6.0\**" target="lib\net6.0" />
+  </files>
+</package>

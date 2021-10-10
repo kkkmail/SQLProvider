@@ -1,0 +1,4 @@
+Attempting to build package from 'SQLProvider_x64.nuspec'.
+WARNING: NU5128: Some target frameworks declared in the dependencies group of the nuspec and the lib/ref folder do not have exact matches in the other location. Consult the list of actions below:
+- Add a dependency group for net6.0 to the nuspec
+Successfully created package 'C:\GitHub\SQLProvider\SQLProvider.1.2.9.3-net6-x64.nupkg'.

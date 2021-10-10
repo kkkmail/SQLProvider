@@ -28,11 +28,10 @@
           "net6.0"
         ],
         "sources": {
-          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\bin\\Release": {},
-          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\bin\\Release": {},
-          "C:\\GitHub\\Softellect\\Messaging\\bin\\x64\\Release": {},
-          "C:\\GitHub\\Softellect\\Sys\\bin\\x64": {},
-          "C:\\GitHub\\Softellect\\Wcf\\bin\\x64\\Release": {},
+          "C:\\GitHub\\SQLProvider": {},
+          "C:\\GitHub\\Softellect\\Messaging\\bin\\Release": {},
+          "C:\\GitHub\\Softellect\\Sys\\bin\\Release": {},
+          "C:\\GitHub\\Softellect\\Wcf\\bin\\Release": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {},
           "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json": {},
@@ -109,11 +108,10 @@
           "net6.0"
         ],
         "sources": {
-          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.DesignTime\\bin\\Release": {},
-          "C:\\GitHub\\SQLProvider\\src\\SQLProvider.Runtime\\bin\\Release": {},
-          "C:\\GitHub\\Softellect\\Messaging\\bin\\x64\\Release": {},
-          "C:\\GitHub\\Softellect\\Sys\\bin\\x64": {},
-          "C:\\GitHub\\Softellect\\Wcf\\bin\\x64\\Release": {},
+          "C:\\GitHub\\SQLProvider": {},
+          "C:\\GitHub\\Softellect\\Messaging\\bin\\Release": {},
+          "C:\\GitHub\\Softellect\\Sys\\bin\\Release": {},
+          "C:\\GitHub\\Softellect\\Wcf\\bin\\Release": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {},
           "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-tools/nuget/v3/index.json": {},
